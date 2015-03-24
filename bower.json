@@ -1,0 +1,27 @@
+{
+  "name": "angular-eha.couchdb-auth",
+  "description": "CouchDB auth wrapper",
+  "version": "0.0.0",
+  "authors": [
+    "Matt Richards <matt@lucidmoon.co.uk>"
+  ],
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "homepage": "http://ehealthafrica.org",
+  "keywords": "",
+  "main": "dist/couchdb-auth.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eHealthAfrica/angular-eha.couchdb-auth.git"
+  },
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

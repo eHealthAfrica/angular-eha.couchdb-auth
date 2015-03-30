@@ -21,8 +21,10 @@
                               $rootScope) {
 
     var currentUser;
+
     // Create a new 'isolate scope' so that we can leverage and wrap angular's
     var eventBus = $rootScope.$new(true);
+
 
     function getSession() {
       return $q.when(Restangular
@@ -101,16 +103,27 @@
       return $q.reject('NOT_IMPLEMENTED');
     }
 
+    function decorateUser(user) {
+      user.hasRole = function(role) {
+        return this.roles.indexOf(role) > -1;
+      };
+
+      user.isAdmin = function() {
+        return this.hasRole('_admin');
+      };
+      return user;
+    }
+
     function getCurrentUser() {
       if (currentUser) {
-        return $q.when(currentUser);
+        return $q.when(decorateUser(currentUser));
       }
 
       return getLocalUser()
         .then(function(user) {
           if (user) {
             currentUser = user;
-            return user;
+            return decorateUser(user);
           } else {
             return $q.reject('User not found');
           }

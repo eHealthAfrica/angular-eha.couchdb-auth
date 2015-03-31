@@ -41,6 +41,7 @@
         }))
         .then(setCurrentUser)
         .then(function(user) {
+          console.log('GOT USER');
           return getSession()
                   .then(function() {
                     return user;
@@ -90,8 +91,8 @@
         return $q.when(Restangular
                        .all('reset-password')
                        .customPOST({
-                          token: config.token,
-                          password: config.password
+                         token: config.token,
+                         password: config.password
                        }));
       }
 

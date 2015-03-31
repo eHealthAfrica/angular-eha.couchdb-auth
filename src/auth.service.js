@@ -233,7 +233,7 @@
 
     this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {
       return ehaCouchDbAuthService.getCurrentUser()
-                .then(function() {
+                .then(function(user) {
                   return user;
                 })
                 .catch(function(err) {

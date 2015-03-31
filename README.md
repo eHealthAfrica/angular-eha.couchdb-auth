@@ -8,57 +8,11 @@
 
 Install with npm:
 
-    npm install --save angular-eha.couchdb-auth
+    npm install --save git@github.com:eHealthAfrica/angular-eha.couchdb-auth.git
 
 Or alternatively bower:
 
-    bower install --save angular-eha.couchdb-auth
-
-### Distribution bundle
-
-- *dist/couchdb-auth.js*
-- *dist/couchdb-auth.min.js*
-
-
-Then simply add `eha.couchdb-auth` as dependencies somewhere in your project that makes sense and you're good to go.
-
-#### A note on wiredep
-
-If you're using wiredep `dist/couchdb-auth.js` will be injected by default. If you don't want that to happen you'll like want to employ something along the following lines in your `Gruntfile`:
-
-```javascript
-wiredep: {
- ...
-  options: {
-    exclude: [
-      'bower_components/couchdb-auth/dist/couchdb-auth.js'
-    ]
-  }
-  ...
-}
-```
-
-Then you're free to include whichever bundle you prefer in what ever manner you prefer.
-
-### Example
-
-```html
-<html ng-app="backButtonExample">
-  <head>
-    <title>Back Button Example</title>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-eha.couchdb-auth/dist/couchdb-auth.js"></script>
-    <script>
-    angular.module('backButtonExample', [
-      'eha.couchdb-auth'
-    ]);
-    </script>
-  </head>
-  <body>
-    <!-- Put an example here! -->
-  </body>
-</html>
-```
+    bower install --save git@github.com:eHealthAfrica/angular-eha.couchdb-auth.git
 
 ## Contributing
 

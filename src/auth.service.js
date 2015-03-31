@@ -41,6 +41,7 @@
         }))
         .then(setCurrentUser)
         .then(function(user) {
+          console.log('GOT USER');
           return getSession()
                   .then(function() {
                     return user;
@@ -90,8 +91,8 @@
         return $q.when(Restangular
                        .all('reset-password')
                        .customPOST({
-                          token: config.token,
-                          password: config.password
+                         token: config.token,
+                         password: config.password
                        }));
       }
 
@@ -213,6 +214,32 @@
         });
         $httpProvider.interceptors.push('ehaCouchDbAuthHttpInterceptor');
       }
+    };
+
+    this.requireAdminUser = function(ehaCouchDbAuthService, $q) {
+      return ehaCouchDbAuthService.getCurrentUser()
+        .then(function(user) {
+          if (user && !user.isAdmin()) {
+            ehaCouchDbAuthService.trigger('unauthorized');
+            return $q.reject('unauthorized');
+          }
+          return true;
+        })
+        .catch(function(err) {
+          ehaCouchDbAuthService.trigger('unauthenticated');
+          return $q.reject('unauthenticated');
+        });
+    };
+
+    this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {
+      return ehaCouchDbAuthService.getCurrentUser()
+                .then(function() {
+                  return true;
+                })
+                .catch(function(err) {
+                  ehaCouchDbAuthService.trigger('unauthenticated');
+                  return $q.reject('unauthenticated');
+                });
     };
 
     this.$get = function(Restangular, $log, $q, $localForage, $rootScope) {

@@ -23,8 +23,8 @@
     var currentUser;
 
     // Create a new 'isolate scope' so that we can leverage and wrap angular's
+    // sub/pub functionality rather than rolling something ourselves
     var eventBus = $rootScope.$new(true);
-
 
     function getSession() {
       return $q.when(Restangular
@@ -51,8 +51,6 @@
             $log.log('couchdb:login:failure:unknown');
             return $q.reject(new Error());
           }
-          console.log(user);
-
           $log.log('couchdb:login:success', user);
           return user;
         })
@@ -87,8 +85,25 @@
         .then(clearLocalUser);
     }
 
-    function resetPassword() {
-      return $q.reject('NOT_IMPLEMENTED');
+    function resetPassword(config) {
+      if (config.token && config.password) {
+        return $q.when(Restangular
+                       .all('reset-password')
+                       .customPOST({
+                          token: config.token,
+                          password: config.password
+                       }));
+      }
+
+      if (config.email) {
+        return $q.when(Restangular
+                       .all('reset-password')
+                       .customPOST({
+                         email: config.email,
+                         callbackUrl: 'http://localhost:5000/#/reset-password'
+                       }));
+      }
+
     }
 
     function addAccount() {

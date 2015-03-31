@@ -215,6 +215,32 @@
       }
     };
 
+    this.requireAdminUser = function(ehaCouchDbAuthService, $q) {
+      return ehaCouchDbAuthService.getCurrentUser()
+        .then(function(user) {
+          if (user && !user.isAdmin()) {
+            ehaCouchDbAuthService.trigger('unauthorized');
+            return $q.reject('unauthorized');
+          }
+          return true;
+        })
+        .catch(function(err) {
+          ehaCouchDbAuthService.trigger('unauthenticated');
+          return $q.reject('unauthenticated');
+        });
+    };
+
+    this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {
+      return ehaCouchDbAuthService.getCurrentUser()
+                .then(function() {
+                  return true;
+                })
+                .catch(function(err) {
+                  ehaCouchDbAuthService.trigger('unauthenticated');
+                  return $q.reject('unauthenticated');
+                });
+    };
+
     this.$get = function(Restangular, $log, $q, $localForage, $rootScope) {
 
       var restangular = Restangular.withConfig(

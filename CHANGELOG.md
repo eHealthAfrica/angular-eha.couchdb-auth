@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+## v0.0.2 - 31/03/2015
+
+### Fixed
+- Return user from authentication provider calls
 
 ## v0.0.1 - 31/03/2015
 

@@ -17,6 +17,11 @@ module.exports = function(config) {
     files: [
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
+      'bower_components/angular-cookies/angular-cookies.js',
+      'bower_components/lodash/lodash.js',
+      'bower_components/restangular/dist/restangular.js',
+      'bower_components/localforage/dist/localforage.js',
+      'bower_components/angular-localForage/dist/angular-localForage.js',
       'src/**/*.js',
       'tests/**/*.spec.js',
       '.tmp/templates.js'

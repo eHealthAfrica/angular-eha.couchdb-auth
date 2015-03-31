@@ -223,7 +223,7 @@
             ehaCouchDbAuthService.trigger('unauthorized');
             return $q.reject('unauthorized');
           }
-          return true;
+          return user;
         })
         .catch(function(err) {
           ehaCouchDbAuthService.trigger('unauthenticated');
@@ -234,7 +234,7 @@
     this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {
       return ehaCouchDbAuthService.getCurrentUser()
                 .then(function() {
-                  return true;
+                  return user;
                 })
                 .catch(function(err) {
                   ehaCouchDbAuthService.trigger('unauthenticated');

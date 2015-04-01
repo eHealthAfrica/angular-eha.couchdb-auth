@@ -36,7 +36,7 @@
       return $q.when(Restangular
         .all('_session')
         .customPOST({
-          name: user.name,
+          name: user.username,
           password: user.password
         }))
         .then(setCurrentUser)
@@ -52,6 +52,7 @@
             $log.log('couchdb:login:failure:unknown');
             return $q.reject(new Error());
           }
+          eventBus.$broadcast('authenticationStateChange');
           $log.log('couchdb:login:success', user);
           return user;
         })
@@ -83,7 +84,10 @@
       return $q.when(Restangular
         .all('_session')
         .remove())
-        .then(clearLocalUser);
+        .then(clearLocalUser)
+        .finally(function() {
+          eventBus.$broadcast('authenticationStateChange');
+        });
     }
 
     function resetPassword(config) {
@@ -350,7 +354,8 @@
   'use strict';
   var ngModule = angular.module('eha.couchdb-auth', [
     'eha.couchdb-auth.http-interceptor',
-    'eha.couchdb-auth.auth.service'
+    'eha.couchdb-auth.auth.service',
+    'eha.couchdb-auth.show-authenticated.directive'
   ]);
 
   // Check for and export to commonjs environment
@@ -359,3 +364,34 @@
   }
 
 })();
+
+angular.module('eha.couchdb-auth.show-authenticated.directive', [])
+  .directive('ehaShowAuthenticated', ['ehaCouchDbAuthService', '$animate', function(ehaCouchDbAuthService, $animate) {
+    var NG_HIDE_CLASS = 'ng-hide';
+    var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
+    return {
+      restrict: 'A',
+      link: function(scope, element) {
+        // Hide by default
+        element.addClass('ng-hide');
+
+        function checkStatus() {
+          ehaCouchDbAuthService.getCurrentUser()
+            .then(function() {
+              $animate.removeClass(element, NG_HIDE_CLASS, {
+                tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+              });
+            })
+            .catch(function() {
+              $animate.addClass(element, NG_HIDE_CLASS, {
+                tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+              });
+            });
+        }
+
+        checkStatus();
+
+        ehaCouchDbAuthService.on('authenticationStateChange', checkStatus);
+      }
+    };
+  }]);

@@ -14,6 +14,7 @@
   "main": [
     "src/auth.service.js",
     "src/http-interceptor.js",
+    "src/show-authenticated.directive.js",
     "src/index.js"
   ],
   "repository": {

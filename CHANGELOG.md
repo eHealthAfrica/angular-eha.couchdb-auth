@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+## v0.1.0 - 01/04/2015
+
+### Added
+- `eha-show-authenticated` directive
+
+### Changed
+- Changed model required by signIn interface, now expects `{username: '', password: ''}`
+
 ## v0.0.2 - 31/03/2015
 
 ### Fixed

@@ -36,7 +36,7 @@
       return $q.when(Restangular
         .all('_session')
         .customPOST({
-          name: user.name,
+          name: user.username,
           password: user.password
         }))
         .then(setCurrentUser)
@@ -52,6 +52,7 @@
             $log.log('couchdb:login:failure:unknown');
             return $q.reject(new Error());
           }
+          eventBus.$broadcast('authenticationStateChange');
           $log.log('couchdb:login:success', user);
           return user;
         })
@@ -83,7 +84,10 @@
       return $q.when(Restangular
         .all('_session')
         .remove())
-        .then(clearLocalUser);
+        .then(clearLocalUser)
+        .finally(function() {
+          eventBus.$broadcast('authenticationStateChange');
+        });
     }
 
     function resetPassword(config) {

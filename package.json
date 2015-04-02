@@ -2,7 +2,9 @@
   "name": "angular-eha.couchdb-auth",
   "version": "0.1.0",
   "description": "CouchDB auth wrapper",
-  "main": "dist/couchdb-auth.js",
+  "main": [
+    "dist/couchdb-auth.js"
+  ],
   "scripts": {
     "test": "grunt test"
   },

@@ -12,10 +12,7 @@
   "homepage": "http://ehealthafrica.org",
   "keywords": "",
   "main": [
-    "src/auth.service.js",
-    "src/http-interceptor.js",
-    "src/show-authenticated.directive.js",
-    "src/index.js"
+    "dist/couchdb-auth.js"
   ],
   "repository": {
     "type": "git",

@@ -25,8 +25,10 @@ module.exports = function(grunt) {
     concat: {
       scripts: {
         src: [
-          'src/**/*.js',
-          '!src/**/*.spec.js'
+          'src/auth.service.js',
+          'src/http-interceptor.js',
+          'src/show-authenticated.directive.js',
+          'src/index.js'
         ],
         dest: '.tmp/scripts.js',
         options: {

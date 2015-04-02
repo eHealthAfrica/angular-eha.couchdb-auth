@@ -101,7 +101,7 @@ describe('eha.couchdb-auth.service', function() {
             ],
             'authenticated':'cookie'
           },
-          'authToken': '***REMOVED***'
+          'authToken': 'AUTH_TOKEN'
         };
 
         couchResFail = {

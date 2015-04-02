@@ -55,6 +55,8 @@ _Promise/A+_ Attempt to destroy a CouchDB sessions and reset local authenitcatio
 
 _Promise/A+_ Password reset features. Typical pattern; request reset token by email, follow link, change password.
 
+**n.b. CouchDB does not provide this functionality. To leverage this functionality you require a compatible 'backend'**
+
 ##### Params
 
 - **email** - Email address of account for which you wish to reset the password

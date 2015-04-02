@@ -1,6 +1,6 @@
 # angular-eha.couchdb-auth
 
-[![Build Status](https://magnum.travis-ci.com/eHealthAfrica/angular-eha.couchdb-auth.svg?***REMOVED***branch=master)](https://magnum.travis-ci.com/eHealthAfrica/angular-eha.couchdb-auth)
+[![Build Status](https://magnum.travis-ci.com/eHealthAfrica/angular-eha.couchdb-auth.svg?&branch=master)](https://magnum.travis-ci.com/eHealthAfrica/angular-eha.couchdb-auth)
 
 ## Usage
 

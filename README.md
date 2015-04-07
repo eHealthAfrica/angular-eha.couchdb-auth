@@ -112,11 +112,11 @@ A simple directive to hide/show dom elements for users depending on their access
 e.g:
 
 ```html
-  <!-- single string. n.b. 's are required -->
+  <!-- single string. must be an expression. n.b. `'`s are required -->
   <div eha-show-for-role="'admin'"></div>
 
   <!-- an array of strings -->
-  <div eha-show-role="['role1', 'role2']"></div>
+  <div eha-show-for-role="['role1', 'role2']"></div>
 ```
 
 ## License

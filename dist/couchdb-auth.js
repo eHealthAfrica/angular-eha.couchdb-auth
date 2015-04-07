@@ -41,7 +41,6 @@
         }))
         .then(setCurrentUser)
         .then(function(user) {
-          console.log('GOT USER');
           return getSession()
                   .then(function() {
                     return user;
@@ -125,7 +124,15 @@
 
     function decorateUser(user) {
       user.hasRole = function(role) {
-        return this.roles.indexOf(role) > -1;
+        var self = this;
+        if (angular.isArray(role)) {
+          var matches = role.filter(function(r) {
+            return self.roles.indexOf(r) > -1;
+          });
+          return !!matches.length;
+        } else if (angular.isString(role)) {
+          return this.roles.indexOf(role) > -1;
+        }
       };
 
       user.isAdmin = function() {
@@ -155,7 +162,6 @@
             });
         })
         .catch(function(err) {
-          console.log(err);
           return $q.reject(err);
         });
     }
@@ -350,6 +356,60 @@
 
 })();
 
+angular.module('eha.couchdb-auth.show-for-role.directive', [])
+  .directive('ehaShowForRole', ['ehaCouchDbAuthService', '$animate', '$parse', '$q', '$log', function(ehaCouchDbAuthService,
+                                        $animate,
+                                        $parse,
+                                        $q,
+                                        $log) {
+    var NG_HIDE_CLASS = 'ng-hide';
+    var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
+
+    return {
+      restrict: 'A',
+      link: function(scope, element, attributes) {
+
+        function checkRoles(requiredRoles) {
+          ehaCouchDbAuthService.getCurrentUser()
+          .then(function(user) {
+            if (user && user.hasRole(requiredRoles)) {
+              $animate.removeClass(element, NG_HIDE_CLASS, {
+                tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+              });
+              return true;
+            }
+            return $q.reject('Role not found');
+          })
+          .catch(function(err) {
+            $log.error(err);
+            $animate.addClass(element, NG_HIDE_CLASS, {
+              tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+            });
+          });
+        }
+
+        // Hide by default
+        element.addClass('ng-hide');
+
+        var attr = $parse(attributes.ehaShowForRole)(scope);
+        var requiredRoles;
+        if (angular.isArray(attr)) {
+          requiredRoles = attr;
+        } else if (angular.isString(attr)) {
+          requiredRoles = [attr];
+        } else {
+          throw Error('You must pass a string or an array of strings');
+        }
+
+        checkRoles(requiredRoles);
+        ehaCouchDbAuthService.on('authenticationStateChange', function() {
+          checkRoles(requiredRoles);
+        });
+      }
+    };
+
+  }]);
+
 angular.module('eha.couchdb-auth.show-authenticated.directive', [])
   .directive('ehaShowAuthenticated', ['ehaCouchDbAuthService', '$animate', function(ehaCouchDbAuthService, $animate) {
     var NG_HIDE_CLASS = 'ng-hide';
@@ -386,6 +446,7 @@ angular.module('eha.couchdb-auth.show-authenticated.directive', [])
   var ngModule = angular.module('eha.couchdb-auth', [
     'eha.couchdb-auth.http-interceptor',
     'eha.couchdb-auth.auth.service',
+    'eha.couchdb-auth.show-for-role.directive',
     'eha.couchdb-auth.show-authenticated.directive'
   ]);
 

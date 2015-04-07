@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+### Added
+- `eha-show-for-role` directive
+
 ## v0.1.0 - 01/04/2015
 
 ### Added

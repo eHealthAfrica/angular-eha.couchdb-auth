@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/eHealthAfrica/angular-eha.couchdb-auth.svg?&branch=master)](https://travis-ci.org/eHealthAfrica/angular-eha.couchdb-auth)
 
-A simple Angular.js CouchDB auth interface.  Works great directly with a CouchDB instance, works even better with a [CouchDB proxy/wrapper API](https://github.com/eHealthAfrica/hapi-couchdb-auth-bearer-plugin). 
+A simple Angular.js CouchDB auth interface.  Works great directly with a CouchDB instance, works even better with a [CouchDB proxy/wrapper API](https://github.com/eHealthAfrica/hapi-couchdb-auth-bearer-plugin).
 
 ## Installation
 
@@ -13,7 +13,7 @@ Install with npm:
 Or alternatively bower:
 
     bower install --save angular-eha.couchdb-auth
-    
+
 ## Usage
 
 If you're using wiredep, then all you need to do is add `eha.couchdb-auth` as an angular module dependency somewhere sensible in your app. In the absense of wiredep, you'll need to manually bundle `dist/couchdb-auth.js`.
@@ -29,7 +29,7 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
     localStorageNamespace: 'mnutrition',    // Namespace for localstorage (default: lf)
     interceptor: {                          // Enable HTTP Interceptor (default: false)
       hosts: [                              // Configure hostnames that should be intercepted
-        'http://mycouchdb.com'            
+        'http://mycouchdb.com'
       ]
     }
   });
@@ -78,7 +78,7 @@ _Promise/A+_ Makes a GET request to the `_session/` endpoint of the CouchDB url 
 
 #### `getCurrentUser()`
 
-_Promise/A+_ Checks the local environment for a user, failing that checks local storage and finally attempts to GET the `_session/` endpoint of the CouchDB url. 
+_Promise/A+_ Checks the local environment for a user, failing that checks local storage and finally attempts to GET the `_session/` endpoint of the CouchDB url.
 
 _Returns a promise_
 
@@ -103,6 +103,20 @@ e.g:
 
 ```html
   <div eha-show-authenticated>Only show me for authenticated sessions</div>
+```
+
+### `eha-show-for-role` directive
+
+A simple directive to hide/show dom elements for users depending on their access control (role) level.  Accepts either a single string or an array of strings.
+
+e.g:
+
+```html
+  <!-- single string. n.b. 's are required -->
+  <div eha-show-for-role="'admin'"></div>
+
+  <!-- an array of strings -->
+  <div eha-show-role="['role1', 'role2']"></div>
 ```
 
 ## License

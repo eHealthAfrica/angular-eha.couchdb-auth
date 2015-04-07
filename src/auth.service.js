@@ -41,7 +41,6 @@
         }))
         .then(setCurrentUser)
         .then(function(user) {
-          console.log('GOT USER');
           return getSession()
                   .then(function() {
                     return user;
@@ -125,7 +124,15 @@
 
     function decorateUser(user) {
       user.hasRole = function(role) {
-        return this.roles.indexOf(role) > -1;
+        var self = this;
+        if (angular.isArray(role)) {
+          var matches = role.filter(function(r) {
+            return self.roles.indexOf(r) > -1;
+          });
+          return !!matches.length;
+        } else if (angular.isString(role)) {
+          return this.roles.indexOf(role) > -1;
+        }
       };
 
       user.isAdmin = function() {
@@ -155,7 +162,6 @@
             });
         })
         .catch(function(err) {
-          console.log(err);
           return $q.reject(err);
         });
     }

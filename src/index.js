@@ -3,6 +3,7 @@
   var ngModule = angular.module('eha.couchdb-auth', [
     'eha.couchdb-auth.http-interceptor',
     'eha.couchdb-auth.auth.service',
+    'eha.couchdb-auth.show-for-role.directive',
     'eha.couchdb-auth.show-authenticated.directive'
   ]);
 

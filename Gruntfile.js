@@ -27,6 +27,7 @@ module.exports = function(grunt) {
         src: [
           'src/auth.service.js',
           'src/http-interceptor.js',
+          'src/show-for-role.directive.js',
           'src/show-authenticated.directive.js',
           'src/index.js'
         ],
@@ -137,10 +138,10 @@ module.exports = function(grunt) {
   grunt.registerTask('build', function() {
     grunt.task.run([
       'clean',
-      
+
       'concat:scripts',
-      
-      
+
+
       'ngAnnotate',
       'copy:scripts',
       'uglify:dist'

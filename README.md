@@ -27,6 +27,7 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
   ehaCouchDbAuthServiceProvider.config({
     url: 'http://mycouchdb.com',            // CouchDB/Proxy URL exposing _session endpoints
     localStorageNamespace: 'mnutrition',    // Namespace for localstorage (default: lf)
+    adminRoles: ['admin'],                  // 'Admin' CouchDB role. (default: `['_admin']`)
     interceptor: {                          // Enable HTTP Interceptor (default: false)
       hosts: [                              // Configure hostnames that should be intercepted
         'http://mycouchdb.com'

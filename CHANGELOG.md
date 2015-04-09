@@ -4,8 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
-### Added
+## v0.1.2
+
+### Added 
 - `eha-show-for-role` directive
+- Allow definition of `adminRoles` during config
 
 ## v0.1.0 - 01/04/2015
 

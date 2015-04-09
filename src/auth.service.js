@@ -136,7 +136,7 @@
       };
 
       user.isAdmin = function() {
-        return this.hasRole('_admin');
+        return this.hasRole(options.adminRoles);
       };
       return user;
     }
@@ -207,11 +207,13 @@
 
     var options = {
       localStorageNamespace: 'eha',
-      localStorageStoreName: 'auth'
+      localStorageStoreName: 'auth',
+      adminRoles: ['_admin']
     };
 
     this.config = function(config) {
       options = angular.extend(options, config);
+
       $localForageProvider.config({
         name: options.localStorageNamespace,
         storeName: options.localStorageStoreName
@@ -227,6 +229,7 @@
     };
 
     this.requireAdminUser = function(ehaCouchDbAuthService, $q) {
+
       return ehaCouchDbAuthService.getCurrentUser()
         .then(function(user) {
           if (user && !user.isAdmin()) {

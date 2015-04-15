@@ -99,13 +99,16 @@
                        }));
       }
 
-      if (config.email) {
+      if (config.email && config.callbackUrl) {
         return $q.when(Restangular
                        .all('reset-password')
                        .customPOST({
                          email: config.email,
-                         callbackUrl: 'http://localhost:5000/#/reset-password'
+                         callbackUrl: config.callbackUrl
                        }));
+      } else {
+        return $q.reject('You must provide both email and callbackUrl ' +
+                         'properties in the payload');
       }
 
     }

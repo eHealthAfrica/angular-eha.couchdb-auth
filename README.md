@@ -28,6 +28,7 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
     url: 'http://mycouchdb.com',            // CouchDB/Proxy URL exposing _session endpoints
     localStorageNamespace: 'mnutrition',    // Namespace for localstorage (default: lf)
     adminRoles: ['admin'],                  // 'Admin' CouchDB role. (default: `['_admin']`)
+    userRoles: ['data_provider', 'analyst'],// Roles other than admin roles
     interceptor: {                          // Enable HTTP Interceptor (default: false)
       hosts: [                              // Configure hostnames that should be intercepted
         'http://mycouchdb.com'
@@ -37,11 +38,13 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
 });
 ```
 
+_Note_: `userRoles` can be camelcase, or hyphenized strings (with '_' or '-' but not with both).
+
 ### ehaCouchDbAuthService
 
 #### `signIn(params)`
 
-_Promise/A+_ Attempt to create a new CouchDB session with given credentials
+_Promise/A+_ Attempt to create a new CouchDB session with given credentials.
 
 ##### Params
 
@@ -95,6 +98,45 @@ Event subscription handler
 - `unauthenticated` - fired whenever an unauthenticated user / session attempts to access a resource that requires authentication.
 - `unauthorized` - fired whenever the current user / session is unauthorised to access a resource
 - `authenticationStateChange` - fired whenever there is a change in authenticate state.
+
+### ehaCouchDBAuthServiceProvider
+
+#### `requireAdminUser`
+
+_Promise/A+_ Check if the user is an admin (has one of the `adminRoles` provided in the config).
+
+#### `require<role-name>User`
+
+E.g. the function for the `data_provider` role will be `requireDataProviderUser`.
+
+_Promise/A+_ Check if the user has a particular role.
+
+_Note_: These functions are created dinamically during the configuration of the module. These can cause problems when using the function within `angular-ui-router` if the routes are loaded before configuring the module. This can be avoided by providing the configuration for the roles when initializing the routes:
+
+```
+  .config(function($stateProvider, ehaCouchDbAuthServiceProvider) {
+    ehaCouchDbAuthServiceProvider.config({
+      userRoles: [
+        'data_provider',
+        'analyst'
+      ]
+    });
+    $stateProvider
+    .state('upload', {
+      url: '/upload',
+      resolve: {
+        isDataProvider: ehaCouchDbAuthServiceProvider.requireDataProviderUser
+      },
+      views: {
+        ...
+      }
+    });
+  }
+```
+
+#### `requireAuthenticatedUser`
+
+_Promise/A+_ Check if the user is authenticated.
 
 ### `eha-show-authenticated` directive
 

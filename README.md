@@ -111,7 +111,7 @@ E.g. the function for the `data_provider` role will be `requireDataProviderUser`
 
 _Promise/A+_ Check if the user has a particular role.
 
-_Note_: These functions are created dinamically during the configuration of the module. These can cause problems when using the function within `angular-ui-router` if the routes are loaded before configuring the module. This can be avoided by providing the configuration for the roles when initializing the routes:
+_Note_: These functions are created dynamically during the configuration of the module. These can cause problems when using the function within `angular-ui-router` if the routes are loaded before configuring the module. This can be avoided by providing the configuration for the roles when initializing the routes:
 
 ```
   .config(function($stateProvider, ehaCouchDbAuthServiceProvider) {

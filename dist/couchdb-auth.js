@@ -214,6 +214,36 @@
       adminRoles: ['_admin']
     };
 
+    function capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function camelCase(string) {
+      var words = [string];
+      if (string.indexOf('-') > -1) {
+        words = string.split('-');
+      } else if (string.indexOf('_') > -1) {
+        words = string.split('_');
+      }
+      words = words.map(capitalizeFirstLetter);
+      return words.join('');
+    }
+
+    function requireUserWithRoles(ehaCouchDbAuthService, $q, roles) {
+      return ehaCouchDbAuthService.getCurrentUser()
+        .then(function(user) {
+          if (user && !user.hasRole(roles)) {
+            ehaCouchDbAuthService.trigger('unauthorized');
+            return $q.reject('unauthorized');
+          }
+          return user;
+        })
+        .catch(function(err) {
+          ehaCouchDbAuthService.trigger('unauthenticated');
+          return $q.reject('unauthenticated');
+        });
+    }
+
     this.config = function(config) {
       options = angular.extend(options, config);
 
@@ -229,22 +259,20 @@
         });
         $httpProvider.interceptors.push('ehaCouchDbAuthHttpInterceptor');
       }
+
+      if (config.userRoles) {
+        config.userRoles.forEach(function(role) {
+          var functionName = 'require' + camelCase(role) + 'User';
+          this[functionName] = function(ehaCouchDbAuthService, $q) {
+            return requireUserWithRoles(ehaCouchDbAuthService, $q, [role]);
+          };
+        }.bind(this));
+      }
     };
 
     this.requireAdminUser = function(ehaCouchDbAuthService, $q) {
-
-      return ehaCouchDbAuthService.getCurrentUser()
-        .then(function(user) {
-          if (user && !user.isAdmin()) {
-            ehaCouchDbAuthService.trigger('unauthorized');
-            return $q.reject('unauthorized');
-          }
-          return user;
-        })
-        .catch(function(err) {
-          ehaCouchDbAuthService.trigger('unauthenticated');
-          return $q.reject('unauthenticated');
-        });
+      return requireUserWithRoles(
+        ehaCouchDbAuthService, $q, options.adminRoles);
     };
 
     this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {

@@ -53,7 +53,7 @@
           }
           eventBus.$broadcast('authenticationStateChange');
           $log.log('couchdb:login:success', user);
-          return user;
+          return decorateUser(user);
         })
         .catch(function(err) {
           if (err.status === 401) {
@@ -182,10 +182,6 @@
 
       $q.reject('No user found');
     }
-
-    eventBus.$on('unauthorized', function() {
-      clearLocalUser();
-    });
 
     return {
       signIn: signIn,

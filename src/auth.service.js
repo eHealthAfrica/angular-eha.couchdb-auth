@@ -183,10 +183,6 @@
       $q.reject('No user found');
     }
 
-    eventBus.$on('unauthorized', function() {
-      clearLocalUser();
-    });
-
     return {
       signIn: signIn,
       signOut: signOut,

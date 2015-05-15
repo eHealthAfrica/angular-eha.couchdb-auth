@@ -39,13 +39,17 @@
           name: user.username,
           password: user.password
         }))
+        .then(function(user) {
+          return user.plain();
+        })
         .then(setCurrentUser)
         .then(function(user) {
           return getSession()
-                  .then(function() {
-                    return user;
+                  .then(function(userMeta) {
+                    return angular.extend(userMeta.plain(), user);
                   });
         })
+        .then(setCurrentUser)
         .then(function(user) {
           if (!user || !user.ok) {
             $log.log('couchdb:login:failure:unknown');
@@ -171,12 +175,7 @@
 
     function setCurrentUser(user) {
       if (user) {
-        user = user.plain();
-        currentUser = {
-          name: user.name,
-          roles: user.roles,
-          bearerToken: user.bearerToken
-        };
+        currentUser =  user;
         return setLocalUser(user);
       }
 

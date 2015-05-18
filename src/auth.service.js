@@ -28,13 +28,13 @@
 
     function getSession() {
       return $q.when(Restangular
-                      .all('_session')
+                      .all(options.sessionEndpoint)
                       .customGET());
     }
 
     function signIn(user) {
       return $q.when(Restangular
-        .all('_session')
+        .all(options.sessionEndpoint)
         .customPOST({
           name: user.username,
           password: user.password
@@ -85,7 +85,7 @@
 
     function signOut() {
       return $q.when(Restangular
-        .all('_session')
+        .all(options.sessionEndpoint)
         .remove())
         .then(clearLocalUser)
         .finally(function() {
@@ -206,7 +206,8 @@
     var options = {
       localStorageNamespace: 'eha',
       localStorageStoreName: 'auth',
-      adminRoles: ['_admin']
+      adminRoles: ['_admin'],
+      sessionEndpoint: '_session'
     };
 
     function capitalizeFirstLetter(str) {

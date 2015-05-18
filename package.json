@@ -1,6 +1,6 @@
 {
   "name": "angular-eha.couchdb-auth",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "CouchDB auth wrapper",
   "main": [
     "dist/couchdb-auth.js"

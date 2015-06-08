@@ -9,8 +9,7 @@
   var ngModule = angular
   .module('eha.couchdb-auth.auth.service', [
     'restangular',
-    'LocalForageModule',
-    'ngCookies'
+    'LocalForageModule'
   ]);
 
   function CouchDbAuthService(options,

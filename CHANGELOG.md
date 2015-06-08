@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+## v0.4.1
+
+### Changed
+- Removed unnecessary  ngCookies dependency
+
 ## v0.1.2
 
 ### Added 

@@ -8,7 +8,6 @@ describe('eha.couchdb-auth.service', function() {
   var $httpBackend;
   var $rootScope;
   var $localForage;
-  var $cookieStore;
   var $http;
   var instanceVersion = 0;
   var config;
@@ -45,7 +44,6 @@ describe('eha.couchdb-auth.service', function() {
                              _$httpBackend_,
                              _$rootScope_,
                              _$localForage_,
-                             _$cookieStore_,
                              _$http_,
                              _$q_) {
 

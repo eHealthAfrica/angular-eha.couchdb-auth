@@ -52,30 +52,11 @@ describe('eha.couchdb-auth.service', function() {
     $httpBackend = _$httpBackend_;
     $rootScope = _$rootScope_;
     $localForage = _$localForage_;
-    $cookieStore = _$cookieStore_;
     $http = _$http_;
     $q = _$q_;
   }));
 
-  afterEach(function(done) {
-    var interval = triggerDigests();
-    // create a fresh instance
-    $localForage.clear().then(function() {
-      $localForage = $localForage.createInstance({
-        name: ++instanceVersion
-      });
-      stopDigests(interval);
-      done();
-    }, function() {
-      done();
-    });
-  });
-
-  it('should pass', function() {
-    return true;
-  });
-
-  describe.skip('Public API', function() {
+  describe('Public API', function() {
     describe('signIn()', function() {
       var couchResSuccess;
       var couchResFail;
@@ -130,9 +111,7 @@ describe('eha.couchdb-auth.service', function() {
       });
 
       describe('valid credentials', function() {
-        beforeEach(inject(function(_$httpBackend_) {
-          $httpBackend = _$httpBackend_;
-        }));
+
         beforeEach(function() {
           $httpBackend
             .whenPOST(config.auth.api.url + '/_session', {
@@ -149,65 +128,24 @@ describe('eha.couchdb-auth.service', function() {
         afterEach(function() {
           $httpBackend.verifyNoOutstandingExpectation();
           $httpBackend.verifyNoOutstandingRequest();
-          $cookieStore.remove('AuthSession');
         });
 
-        it('should log in with valid credentials', function(done) {
-
-          var interval = triggerDigests();
+        it('should log in with valid credentials', function() {
 
           var login = service.signIn({
-            name: 'test',
+            username: 'test',
             password: 'test'
           });
 
-          login.then(function() {
-            console.log('THEN');
-          }, function() {
-            console.log('ERROR');
+          login.should.become({
+            name: couchResSuccess.userCtx.name,
+            roles: couchResSuccess.userCtx.roles,
+          }).and.notify(function() {
+            stopDigests(interval);
             done();
           });
 
-          stopDigests(interval);
-
-          $timeout.flush();
-
-          // login.should.become({
-          //   name: couchResSuccess.userCtx.name,
-          //   roles: couchResSuccess.userCtx.roles,
-          //   authToken: $cookieStore.get('AuthSession')
-          // }).and.notify(function() {
-          //   stopDigests(interval);
-          //   done();
-          // });
-        });
-
-        it('should update currentUser', function(done) {
-          var login = service.signIn({
-            name: 'test',
-            password: 'test'
-          });
-
           $httpBackend.flush();
-          var interval = triggerDigests();
-
-          login.then(function() {
-            expect($http.defaults.headers.common.Authorization)
-              .to
-              .equal('Bearer ' + $cookieStore.get('AuthSession'));
-
-            service.getCurrentUser()
-                      .should
-                      .become({
-                        name: couchResSuccess.userCtx.name,
-                        roles: couchResSuccess.userCtx.roles,
-                        authToken: $cookieStore.get('AuthSession')
-                      }).and.notify(function() {
-                        stopDigests(interval);
-                        done();
-                      });
-
-          });
         });
       });
 
@@ -227,7 +165,7 @@ describe('eha.couchdb-auth.service', function() {
 
         it('should not log in with invalid credentials', function() {
           service.signIn({
-            name: 'test',
+            username: 'test',
             password: 'wrong'
           }).should.be.rejectedWith('Invalid Credentials');
           $httpBackend.flush();
@@ -286,33 +224,6 @@ describe('eha.couchdb-auth.service', function() {
         });
       });
 
-      describe('currentUser exists', function() {
-        beforeEach(function(done) {
-          TEST_USER = {
-            name: 'TEST USER',
-            roles: [
-              'TEST ROLE'
-            ]
-          };
-          var interval = triggerDigests();
-
-          $localForage
-          .setItem('user', TEST_USER)
-          .then(function() {
-            stopDigests(interval);
-            done();
-          });
-        });
-
-        it('should getCurrentUser()', function(done) {
-          var interval = triggerDigests();
-          service.getCurrentUser()
-            .should.eventually.become(TEST_USER).and.notify(function() {
-              stopDigests(interval);
-              done();
-            });
-        });
-      });
     });
     it('resetPassword() should be defined', function() {
       expect(service.resetPassword).to.be.defined;

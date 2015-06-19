@@ -184,26 +184,19 @@ describe('eha.couchdb-auth.service', function() {
         };
         couchResFail = {};
 
-        $httpBackend
-          .whenDELETE(config.auth.api.url + '/_session')
-          .respond(couchResSuccess);
-
-      });
-
-      afterEach(function() {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
       });
 
       it('should be defined', function() {
         expect(service.signOut).to.be.defined;
       });
 
-      it('should log out', function() {
-        service.signOut().should.become(couchResSuccess);
-        $httpBackend.flush();
+      it('should log out', function(done) {
+        triggerDigests();
+        expect(service.signOut()).to.be.fulfilled.and.notify(function() {
+          stopDigests();
+          done();
+        });
       });
-
     });
 
     describe('getCurrentUser()', function() {
@@ -214,13 +207,12 @@ describe('eha.couchdb-auth.service', function() {
       });
 
       describe('no currentUser', function() {
-        it('should getCurrentUser()', function(done) {
-          var interval = triggerDigests();
+
+        it('should getCurrentUser()', function() {
+          $httpBackend.whenGET('http://localhost:5000/_session')
+          .respond(true);
           service.getCurrentUser()
-            .should.be.rejectedWith('User not found').and.notify(function() {
-              stopDigests(interval);
-              done();
-            });
+          .should.be.rejectedWith('User not found');
         });
       });
 

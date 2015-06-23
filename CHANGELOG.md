@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+## v0.5.0
+
+### Changed
+- Trigger `unauthenticated` error on stale session
+
 ## v0.4.1
 
 ### Changed

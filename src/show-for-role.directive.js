@@ -23,7 +23,7 @@ angular.module('eha.couchdb-auth.show-for-role.directive', [])
             return $q.reject('Role not found');
           })
           .catch(function(err) {
-            $log.error(err);
+            $log.debug(err);
             $animate.addClass(element, NG_HIDE_CLASS, {
               tempClasses: NG_HIDE_IN_PROGRESS_CLASS
             });

@@ -28,7 +28,14 @@
     function getSession() {
       return $q.when(Restangular
                       .all(options.sessionEndpoint)
-                      .customGET());
+                      .customGET())
+                      .then(function(session) {
+                        if (session.userCtx) {
+                          return session;
+                        } else {
+                          $q.reject('Session not found');
+                        }
+                      });
     }
 
     function signIn(user) {
@@ -51,19 +58,19 @@
         .then(setCurrentUser)
         .then(function(user) {
           if (!user || !user.ok) {
-            $log.log('couchdb:login:failure:unknown');
+            $log.debug('couchdb:login:failure:unknown');
             return $q.reject(new Error());
           }
           eventBus.$broadcast('authenticationStateChange');
-          $log.log('couchdb:login:success', user);
+          $log.debug('couchdb:login:success', user);
           return decorateUser(user);
         })
         .catch(function(err) {
           if (err.status === 401) {
-            $log.log('couchdb:login:failure:invalid-credentials', err);
+            $log.debug('couchdb:login:failure:invalid-credentials', err);
             return $q.reject(new Error('Invalid Credentials'));
           } else {
-            $log.log('couchdb:login:failure:unknown', err);
+            $log.debug('couchdb:login:failure:unknown', err);
             return $q.reject(new Error(err));
           }
         });
@@ -83,13 +90,10 @@
     }
 
     function signOut() {
-      return $q.when(Restangular
-        .all(options.sessionEndpoint)
-        .remove())
-        .then(clearLocalUser)
-        .finally(function() {
-          eventBus.$broadcast('authenticationStateChange');
-        });
+      return clearLocalUser().then(function() {
+        eventBus.$broadcast('authenticationStateChange');
+        return true;
+      });
     }
 
     function resetPassword(config) {
@@ -163,11 +167,12 @@
         })
         .then(function(user) {
           return getSession()
-            .then(function() {
-              return user;
-            });
+                  .then(function() {
+                    return user;
+                  });
         })
         .catch(function(err) {
+          $log.debug(err);
           return $q.reject(err);
         });
     }
@@ -193,7 +198,14 @@
       getSession: getSession,
       getCurrentUser: getCurrentUser,
       on: eventBus.$on.bind(eventBus),
-      trigger: eventBus.$broadcast.bind(eventBus)
+      trigger: eventBus.$broadcast.bind(eventBus),
+      isAuthenticated: function() {
+        if (!currentUser) {
+          return $q.reject();
+        }
+
+        return getSession();
+      }
     };
   }
 
@@ -348,7 +360,7 @@
               return request;
             })
             .catch(function(err) {
-              $log.error(err);
+              $log.debug(err);
               // If we don't find a user then just allow the request to pass
               // through un modified
               return request;
@@ -360,7 +372,7 @@
         // Check for 401 and hostMatch
         if (rejection.status === 401 && hostMatch(rejection.config.url)) {
           var auth = $injector.get('ehaCouchDbAuthService');
-          auth.trigger('unauthorized');
+          auth.trigger('unauthenticated');
         }
         return $q.reject(rejection);
       }
@@ -410,7 +422,7 @@ angular.module('eha.couchdb-auth.show-for-role.directive', [])
             return $q.reject('Role not found');
           })
           .catch(function(err) {
-            $log.error(err);
+            $log.debug(err);
             $animate.addClass(element, NG_HIDE_CLASS, {
               tempClasses: NG_HIDE_IN_PROGRESS_CLASS
             });
@@ -450,7 +462,7 @@ angular.module('eha.couchdb-auth.show-authenticated.directive', [])
         element.addClass('ng-hide');
 
         function checkStatus() {
-          ehaCouchDbAuthService.getCurrentUser()
+          ehaCouchDbAuthService.isAuthenticated()
             .then(function() {
               $animate.removeClass(element, NG_HIDE_CLASS, {
                 tempClasses: NG_HIDE_IN_PROGRESS_CLASS

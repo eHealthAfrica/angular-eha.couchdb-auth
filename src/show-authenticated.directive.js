@@ -9,7 +9,7 @@ angular.module('eha.couchdb-auth.show-authenticated.directive', [])
         element.addClass('ng-hide');
 
         function checkStatus() {
-          ehaCouchDbAuthService.getCurrentUser()
+          ehaCouchDbAuthService.isAuthenticated()
             .then(function() {
               $animate.removeClass(element, NG_HIDE_CLASS, {
                 tempClasses: NG_HIDE_IN_PROGRESS_CLASS

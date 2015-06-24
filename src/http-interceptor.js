@@ -36,7 +36,7 @@
               return request;
             })
             .catch(function(err) {
-              $log.error(err);
+              $log.debug(err);
               // If we don't find a user then just allow the request to pass
               // through un modified
               return request;
@@ -48,7 +48,7 @@
         // Check for 401 and hostMatch
         if (rejection.status === 401 && hostMatch(rejection.config.url)) {
           var auth = $injector.get('ehaCouchDbAuthService');
-          auth.trigger('unauthorized');
+          auth.trigger('unauthenticated');
         }
         return $q.reject(rejection);
       }

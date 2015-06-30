@@ -26,9 +26,10 @@
     var eventBus = $rootScope.$new(true);
 
     function getSession() {
+      var sessionUrl = options.url + '/' + options.sessionEndpoint;
       return $q.when(Restangular
-                      .all(options.sessionEndpoint)
-                      .customGET())
+                      .oneUrl('session', sessionUrl)
+                      .get())
                       .then(function(session) {
                         if (session.userCtx) {
                           return session;

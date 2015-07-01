@@ -1,7 +1,7 @@
 {
   "name": "angular-eha.couchdb-auth",
   "description": "CouchDB auth wrapper",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "authors": [
     "Matt Richards <matt@lucidmoon.co.uk>"
   ],

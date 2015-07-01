@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - unreleased
 
+## v0.5.1
+
+### Fixed
+- `getSession` and interceptor
+
 ## v0.5.0
 
 ### Changed

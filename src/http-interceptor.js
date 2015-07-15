@@ -26,12 +26,12 @@
           // Grab the service this way to avoid a circular dependency
           var auth = $injector.get('ehaCouchDbAuthService');
           // Try to get current user
-          return auth.getCurrentUser()
-            .then(function(user) {
-              if (user && user.bearerToken) {
-                // If user and user.bearerToken are found configure the
+          return auth.getAuthToken()
+            .then(function(token) {
+              if (token) {
+                // If token has been found configure the
                 // Authorization header for this call appropriately
-                request.headers.Authorization = 'Bearer ' + user.bearerToken;
+                request.headers.Authorization = 'Bearer ' + token;
               }
               return request;
             })

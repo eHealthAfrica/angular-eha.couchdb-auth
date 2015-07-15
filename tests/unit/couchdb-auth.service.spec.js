@@ -215,8 +215,23 @@ describe('eha.couchdb-auth.service', function() {
           .should.be.rejectedWith('User not found');
         });
       });
-
     });
+
+    describe('getAuthToken()', function() {
+      it('should be defined', function() {
+        expect(service.getAuthToken).to.be.defined;
+      });
+
+      describe('no currentUser', function() {
+        it('should getAuthToken()', function() {
+          $httpBackend.whenGET('http://localhost:5000/_session')
+          .respond(true);
+          service.getCurrentUser()
+          .should.be.rejectedWith('User not found');
+        });
+      });
+    });
+
     it('resetPassword() should be defined', function() {
       expect(service.resetPassword).to.be.defined;
     });

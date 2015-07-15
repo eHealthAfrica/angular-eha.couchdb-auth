@@ -178,6 +178,13 @@
         });
     }
 
+    function getAuthToken() {
+      return getCurrentUser()
+        .then(function(user) {
+          return user && user.bearerToken;
+        });
+    }
+
     function setCurrentUser(user) {
       if (user) {
         currentUser =  user;
@@ -198,6 +205,7 @@
       },
       getSession: getSession,
       getCurrentUser: getCurrentUser,
+      getAuthToken: getAuthToken,
       on: eventBus.$on.bind(eventBus),
       trigger: eventBus.$broadcast.bind(eventBus),
       isAuthenticated: function() {

@@ -102,6 +102,27 @@ Event subscription handler
 
 ### ehaCouchDBAuthServiceProvider
 
+The provider exposes some functions suitable to be used as values for
+the `resolve` option of the `when` method of the `$routeProvider`, or
+as values for analogous options passed to the Angular UI router. Check
+[Angular's
+documentation](https://docs.angularjs.org/api/ngRoute/provider/$routeProvider)
+for more information. Note that `requireAdminUser` and
+`requireAuthenticatedUser` are designed to work this way, and need to
+have their arguments injected by `$routeProvider`, so use them for
+example like this:
+
+```js
+var auth = ehaCouchDbAuthServiceProvider.requireAuthenticatedUser;
+$routeProvider
+  .when('/page', {
+    templateUrl: 'views/page.html',
+    controller: 'PageCtrl',
+    resolve: auth
+  })
+  ...
+```
+
 #### `requireAdminUser`
 
 _Promise/A+_ Check if the user is an admin (has one of the `adminRoles` provided in the config).

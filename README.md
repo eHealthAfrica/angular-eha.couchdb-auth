@@ -41,6 +41,13 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
 
 _Note_: `userRoles` can be camelcase, or hyphenized strings (with '_' or '-' but not with both).
 
+Configuring an interceptor will internally add an `$http` interceptor,
+which will automatically add the bearer token to outcoming requests,
+and handle authentication errors (code 401) in the responses. You can
+react to intercepted errors using the `.on` method, see
+[below](#onevent-handler). The interceptor will act on communications
+with locations matching one of the values in `hosts`.
+
 ### ehaCouchDbAuthService
 
 #### `signIn(params)`

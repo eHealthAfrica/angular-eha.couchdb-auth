@@ -98,7 +98,6 @@ Event subscription handler
 
 - `unauthenticated` - fired whenever an unauthenticated user / session attempts to access a resource that requires authentication.
 - `unauthorized` - fired whenever the current user / session is unauthorised to access a resource
-- `authenticationStateChange` - fired whenever there is a change in authenticate state.
 
 ### ehaCouchDBAuthServiceProvider
 

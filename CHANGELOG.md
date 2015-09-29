@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased] - unreleased
+## >=0.5.2
+
+Our release process changed to use [semantic-release][]. Please refer to [GitHub releases][] for the latest release notes.
+
+[semantic-release]: https://github.com/semantic-release/semantic-release
+[github releases]: https://github.com/eHealthAfrica/angular-eha.couchdb-auth/releases
 
 ## v0.5.1
 

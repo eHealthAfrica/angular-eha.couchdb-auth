@@ -73,32 +73,7 @@ If you need to override the default template, simply replace what's already in t
 
 ## Release Process
 
-To make a release, ensure you have issued `grunt build`, committed the distribution package and tagged the commit with an appropriate version according to the [SemVer spec](http://semver.org/).
+We use [semantic-release][] to automate our releases. Just ensure your commit message conforms to the [AngularJS conventions][] and your all set!
 
-To make this easy for you, there's a handy grunt task. Simply issue `grunt release:major|minor|patch` and grunt will take care of building, committing and tagging for you. Then make a PR to the master branch of the upstream, merge upon CI build success and then all that's left to do is to push the tags to the upstream.
-
-e.g:
-
-```bash
-  grunt release:minor
-  git pull-request -b <upstream_repo>:master
-  git push upstream --tags
-```
-
-### Publishing to npm
-
-To publish a new version to npm, simply issue from the command line prior making a release (i.e.issuing a `grunt release` and pushing both commits and tags to the upstream):
-
-```
-npm publish
-```
-
-### Publishing to bower
-
-Publishing to bower is slightly simpler in so far that you only have to do it once, and not explicitly for every release like npm:
-
-e.g.
-
-```
-bower register angular-eha.couchdb-auth <upstream_repo_url>
-```
+[semantic-release]: https://github.com/semantic-release/semantic-release
+[angularjs conventions]: https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md

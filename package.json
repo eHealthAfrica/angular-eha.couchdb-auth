@@ -5,6 +5,8 @@
     "dist/couchdb-auth.js"
   ],
   "scripts": {
+    "commit-build": "git commit -i dist -m 'chore: rebuild'",
+    "build": "grunt build",
     "test": "grunt test",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
@@ -27,15 +29,17 @@
     "angular-ui-router": "^0.2.13",
     "chai": "^2.0.0",
     "chai-as-promised": "^4.2.0",
+    "ghooks": "^0.3.2",
     "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
     "grunt-concat": "^0.1.6",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-copy": "^0.7.0",
-    "grunt-contrib-uglify": "^0.8.0",
     "grunt-contrib-jshint": "^0.11.0",
-    "grunt-jscs": "^1.5.0",
+    "grunt-contrib-uglify": "^0.8.0",
     "grunt-html2js": "^0.3.0",
+    "grunt-jscs": "^1.5.0",
     "grunt-karma": "^0.10.1",
     "grunt-ng-annotate": "^0.10.0",
     "i": "^0.3.2",
@@ -51,10 +55,15 @@
     "lodash": "^3.2.0",
     "mocha": "^2.1.0",
     "optimist": "^0.6.1",
-    "sinon": "^1.12.2",
-    "semantic-release": "^4.3.5"
+    "semantic-release": "^4.3.5",
+    "sinon": "^1.12.2"
   },
   "dependencies": {
     "restangular": "^1.4.0"
+  },
+  "config": {
+    "ghooks": {
+      "pre-push": "npm run build && npm run commit-build"
+    }
   }
 }

@@ -8,7 +8,7 @@
     "build": "grunt build",
     "postinstall": "bower install",
     "test": "grunt test",
-    "publish-dist": "npm run build && publish-dist --author-name 'ehealthafrica-ci' --author-email 'ehealthafrica-ci@ehealthafrica.org'",
+    "publish-dist": "npm run build && publish-dist --author-name 'ehealthafrica-ci' --author-email 'devops+github+ehealthafrica-ci@ehealthafrica.org'",
     "semantic-release": "semantic-release pre && npm run publish-dist && npm publish && semantic-release post"
   },
   "repository": {

@@ -9,6 +9,7 @@ before_script:
 cache:
   directories:
   - node_modules
+  - bower_components
 notifications:
   email: false
 after_success:

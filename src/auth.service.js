@@ -240,7 +240,7 @@
     function requireUserWithRoles(ehaCouchDbAuthService, $q, roles) {
       return ehaCouchDbAuthService.getCurrentUser()
         .then(function(user) {
-          if (user && !user.hasRole(roles)) {
+          if (user && !user.isAdmin() && !user.hasRole(roles)) {
             ehaCouchDbAuthService.trigger('unauthorized');
             return $q.reject('unauthorized');
           }

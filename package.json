@@ -7,7 +7,8 @@
   "scripts": {
     "postinstall": "bower install",
     "test": "grunt test",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "publish-dist": "grunt build && publish-dist --author-name 'ehealthafrica-ci' --author-email 'ehealthafrica-ci@ehealthafrica.org'",
+    "semantic-release": "semantic-release pre && npm run publish-dist && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
@@ -54,6 +55,7 @@
     "lodash": "^3.2.0",
     "mocha": "^2.1.0",
     "optimist": "^0.6.1",
+    "publish-dist": "1.0.2",
     "semantic-release": "^4.3.5",
     "sinon": "^1.12.2"
   },

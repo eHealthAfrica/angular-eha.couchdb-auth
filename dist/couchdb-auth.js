@@ -247,6 +247,9 @@
           return user;
         })
         .catch(function(err) {
+          if (err === 'unauthorized') {
+            throw err;
+          }
           ehaCouchDbAuthService.trigger('unauthenticated');
           return $q.reject('unauthenticated');
         });

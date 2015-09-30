@@ -14,7 +14,7 @@ angular.module('eha.couchdb-auth.show-for-role.directive', [])
         function checkRoles(requiredRoles) {
           ehaCouchDbAuthService.getCurrentUser()
           .then(function(user) {
-            if (user && user.hasRole(requiredRoles)) {
+            if (user && (user.hasRole(requiredRoles) || user.isAdmin())) {
               $animate.removeClass(element, NG_HIDE_CLASS, {
                 tempClasses: NG_HIDE_IN_PROGRESS_CLASS
               });

@@ -62,5 +62,6 @@
   },
   "dependencies": {
     "restangular": "1.5.1"
-  }
+  },
+  "version": "1.0.0"
 }

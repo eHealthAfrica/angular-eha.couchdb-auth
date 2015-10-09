@@ -42,7 +42,7 @@
     "grunt-html2js": "0.3.4",
     "grunt-jscs": "1.8.0",
     "grunt-karma": "0.10.1",
-    "grunt-ng-annotate": "0.10.0",
+    "grunt-ng-annotate": "1.0.1",
     "i": "0.3.3",
     "karma": "0.12.37",
     "karma-chai": "0.1.0",

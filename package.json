@@ -40,7 +40,7 @@
     "grunt-contrib-jshint": "0.11.3",
     "grunt-contrib-uglify": "0.8.1",
     "grunt-html2js": "0.3.4",
-    "grunt-jscs": "1.8.0",
+    "grunt-jscs": "2.1.0",
     "grunt-karma": "0.10.1",
     "grunt-ng-annotate": "0.10.0",
     "i": "0.3.3",

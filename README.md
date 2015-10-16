@@ -34,6 +34,9 @@ app.config(function(ehaCouchDbAuthServiceProvider) {
       hosts: [                              // Configure hostnames that should be intercepted
         'http://mycouchdb.com'
       ]
+    },
+    defaultHttpFields: {                    // Passed through to Angular's $http config (default: unset)
+      withCredentials: true                 // See: https://docs.angularjs.org/api/ng/service/$http#usage
     }
   });
 });

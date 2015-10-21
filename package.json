@@ -58,7 +58,7 @@
     "optimist": "0.6.1",
     "publish-dist": "1.0.8",
     "semantic-release": "4.3.5",
-    "sinon": "1.17.1"
+    "sinon": "1.17.2"
   },
   "dependencies": {
     "restangular": "1.5.1"

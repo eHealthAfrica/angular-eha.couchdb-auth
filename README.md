@@ -116,8 +116,8 @@ the `resolve` option of the `when` method of the `$routeProvider`, or
 as values for analogous options passed to the Angular UI router. Check
 [Angular's
 documentation](https://docs.angularjs.org/api/ngRoute/provider/$routeProvider)
-for more information. Note that `requireAdminUser` and
-`requireAuthenticatedUser` are designed to work this way, and need to
+for more information. Note that `requireAdminUser`,
+`requireAuthenticatedUser` and `requireUserWithRoles` are designed to work this way, and need to
 have their arguments injected by `$routeProvider`, so use them for
 example like this:
 
@@ -163,6 +163,22 @@ _Note_: These functions are created dynamically during the configuration of the 
       }
     });
   }
+```
+
+#### `requireUserWithRoles`
+
+_Promise/A+_ Check if the user is has a role in the given set.
+
+Similar to [require<role-name>User](#requirerole-nameuser) but supports checking against multiple roles, for example:
+
+```js
+// Within a $stateProvider.state declaration
+resolve: {
+  authorization: ehaCouchDbAuthServiceProvider.requireUserWithRoles([
+    'data_provider',
+    'analyst'
+  ])
+}
 ```
 
 #### `requireAuthenticatedUser`

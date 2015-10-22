@@ -297,6 +297,12 @@
                 });
     };
 
+    this.requireUserWithRoles = function(roles) {
+      return function(ehaCouchDbAuthService, $q) {
+        return requireUserWithRoles(ehaCouchDbAuthService, $q, roles);
+      };
+    };
+
     this.$get = function(Restangular, $log, $q, $localForage, $rootScope) {
 
       var restangular = Restangular.withConfig(

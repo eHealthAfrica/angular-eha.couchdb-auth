@@ -25,7 +25,7 @@
   ],
   "homepage": "http://ehealthafrica.org",
   "devDependencies": {
-    "angular": "1.4.7",
+    "angular": "1.4.8",
     "angular-mocks": "1.4.7",
     "angular-ui-router": "0.2.15",
     "bower": "1.6.5",

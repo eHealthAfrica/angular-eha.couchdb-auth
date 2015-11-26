@@ -28,7 +28,7 @@
     "angular": "1.4.7",
     "angular-mocks": "1.4.7",
     "angular-ui-router": "0.2.15",
-    "bower": "1.6.5",
+    "bower": "1.6.7",
     "chai": "2.3.0",
     "chai-as-promised": "4.3.0",
     "grunt": "0.4.5",

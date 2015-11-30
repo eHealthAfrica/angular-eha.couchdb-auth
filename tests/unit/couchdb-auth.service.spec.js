@@ -25,6 +25,7 @@ describe('eha.couchdb-auth.service', function() {
   beforeEach(module('eha.couchdb-auth',
     function(ehaCouchDbAuthServiceProvider, $provide) {
       config = {
+        log: true,
         auth: {
           api: {
             url: 'http://localhost:5000'
@@ -36,6 +37,8 @@ describe('eha.couchdb-auth.service', function() {
           url: config.auth.api.url,
           localStorageNamespace: 'mnutrition-app',
         });
+
+      ehaCouchDbAuthServiceProvider.enableLogging(false);
     })
   );
 
@@ -226,6 +229,9 @@ describe('eha.couchdb-auth.service', function() {
     });
     it('accounts.remove() should be defined', function() {
       expect(service.accounts.remove).to.be.defined;
+    });
+    it('enable logging to not be enabled', function() {
+      expect(service.isLoggingEnabled()).to.be.false;
     });
   });
 });

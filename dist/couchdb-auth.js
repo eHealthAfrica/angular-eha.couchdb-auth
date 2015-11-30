@@ -59,19 +59,27 @@
         .then(setCurrentUser)
         .then(function(user) {
           if (!user || !user.ok) {
-            $log.debug('couchdb:login:failure:unknown');
+            if (options.log) {
+              $log.debug('couchdb:login:failure:unknown');
+            }
             return $q.reject(new Error());
           }
           eventBus.$broadcast('authenticationStateChange');
-          $log.debug('couchdb:login:success', user);
+          if (options.log) {
+            $log.debug('couchdb:login:success', user);
+          }
           return decorateUser(user);
         })
         .catch(function(err) {
           if (err.status === 401) {
-            $log.debug('couchdb:login:failure:invalid-credentials', err);
+            if (options.log) {
+              $log.debug('couchdb:login:failure:invalid-credentials', err);
+            }
             return $q.reject(new Error('Invalid Credentials'));
           } else {
-            $log.debug('couchdb:login:failure:unknown', err);
+            if (options.log) {
+              $log.debug('couchdb:login:failure:unknown', err);
+            }
             return $q.reject(new Error(err));
           }
         });
@@ -173,7 +181,9 @@
                   });
         })
         .catch(function(err) {
-          $log.debug(err);
+          if (options.log) {
+            $log.debug(err);
+          }
           return $q.reject(err);
         });
     }
@@ -206,6 +216,9 @@
         }
 
         return getSession();
+      },
+      isLoggingEnabled: function() {
+        return options.log;
       }
     };
   }
@@ -219,7 +232,8 @@
       localStorageNamespace: 'eha',
       localStorageStoreName: 'auth',
       adminRoles: ['_admin'],
-      sessionEndpoint: '_session'
+      sessionEndpoint: '_session',
+      log: true
     };
 
     function capitalizeFirstLetter(str) {
@@ -279,6 +293,10 @@
           };
         }.bind(this));
       }
+    };
+
+    this.enableLogging = function(log) {
+      options.log = !!log;
     };
 
     this.requireAdminUser = function(ehaCouchDbAuthService, $q) {

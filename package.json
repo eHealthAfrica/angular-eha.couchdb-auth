@@ -52,7 +52,7 @@
     "karma-mocha": "0.1.10",
     "karma-sinon": "1.0.4",
     "karma-sinon-chai": "0.3.2",
-    "load-grunt-tasks": "3.3.0",
+    "load-grunt-tasks": "3.4.0",
     "lodash": "3.10.1",
     "mocha": "2.3.3",
     "optimist": "0.6.1",

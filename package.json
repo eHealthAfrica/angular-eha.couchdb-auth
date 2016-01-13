@@ -51,7 +51,7 @@
     "karma-firefox-launcher": "0.1.6",
     "karma-mocha": "0.1.10",
     "karma-sinon": "1.0.4",
-    "karma-sinon-chai": "0.3.2",
+    "karma-sinon-chai": "1.1.0",
     "load-grunt-tasks": "3.3.0",
     "lodash": "3.10.1",
     "mocha": "2.3.3",

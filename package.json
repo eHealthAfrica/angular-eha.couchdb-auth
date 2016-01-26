@@ -27,7 +27,7 @@
   "devDependencies": {
     "angular": "1.4.7",
     "angular-mocks": "1.4.7",
-    "angular-ui-router": "0.2.15",
+    "angular-ui-router": "0.2.17",
     "bower": "1.6.5",
     "chai": "2.3.0",
     "chai-as-promised": "4.3.0",

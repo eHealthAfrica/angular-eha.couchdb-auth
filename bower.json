@@ -1,0 +1,35 @@
+{
+  "name": "angular-eha.ums-auth",
+  "description": "UMS auth wrapper",
+  "authors": [
+    "Matt Richards <matt@lucidmoon.co.uk>",
+    "Timo Taglieber <timo.taglieber@ehealthnigeria.org>"
+  ],
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "homepage": "http://ehealthafrica.org",
+  "keywords": "",
+  "main": [
+    "dist/ums-auth.js"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "restangular": "~1.4.0",
+    "lodash": "~3.5.0",
+    "localforage": "~1.2.2",
+    "angular-localForage": "~1.2.2"
+  },
+  "resolutions": {
+    "lodash": "~3.5.0",
+    "localforage": "~1.2.2"
+  }
+}

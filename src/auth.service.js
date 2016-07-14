@@ -12,6 +12,7 @@
   function UmsAuthService(options, Restangular, $log, $q, $rootScope) {
 
     var SESSION_URL = options.url + '/' + options.sessionEndpoint;
+    var COOKIE_NAME = options.sessionCookieName;
     var currentUser;
 
     // Create a new 'isolate scope' so that we can leverage and wrap angular's
@@ -39,7 +40,7 @@
      */
     function signOut() {
       console.log('angular-eha.ums-auth: deleting vanSession cookie');
-      document.cookie = 'vanSession=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = COOKIE_NAME + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       eventBus.$broadcast('authenticationStateChange');
     }
 
@@ -68,8 +69,8 @@
       return user;
     }
 
-    function hasUmsSessionCookie() {
-      var regex = new RegExp('vanSession=.+');
+    function hasSessionCookie() {
+      var regex = new RegExp(COOKIE_NAME + '=.+');
       return regex.test(document.cookie);
     }
 
@@ -79,7 +80,7 @@
         console.log('angular-eha.ums-auth: getCurrentUser: currentUser found:', currentUser.name);
         return $q.when(decorateUser(currentUser));
         // If $q.when() is passed a non-promise object, it is effectively the same as creating an immediately resolved promise object
-      } else if (hasUmsSessionCookie()) {
+      } else if (hasSessionCookie()) {
         console.log('angular-eha.ums-auth: getCurrentUser: currentUser not found, but we have a session cookie.');
         var sessionUrl = options.url + '/' + options.sessionEndpoint;
         return $q.when(Restangular

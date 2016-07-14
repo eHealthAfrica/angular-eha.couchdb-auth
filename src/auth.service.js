@@ -7,12 +7,9 @@
    * @module eha.ums-auth
    */
   var ngModule = angular
-  .module('eha.ums-auth.auth.service', [
-    'restangular',
-    'LocalForageModule'
-  ]);
+  .module('eha.ums-auth.auth.service', ['restangular']);
 
-  function UmsAuthService(options, Restangular, $log, $q, $localForage, $rootScope) {
+  function UmsAuthService(options, Restangular, $log, $q, $rootScope) {
 
     var currentUser;
 
@@ -34,28 +31,10 @@
         });
     }
 
-    function clearLocalUser() {
-      currentUser = null;
-      return $localForage.removeItem('user');
-    }
-
-    function setLocalUser(user) {
-      return $localForage.setItem('user', user);
-    }
-
-    function getLocalUser() {
-      var user = $localForage.getItem('user');
-      console.log('angular-eha.ums-auth getLocalUser user=', user);
-      return user;
-    }
-
     function signOut() {
-      return clearLocalUser().then(function() {
-        // TODO: also delete casSession cookie!
-        // document.cookie = 'casSession=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        eventBus.$broadcast('authenticationStateChange');
-        return true;
-      });
+      console.log('angular-eha.ums-auth: deleting vanSession cookie');
+      document.cookie = 'vanSession=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      eventBus.$broadcast('authenticationStateChange');
     }
 
     function decorateUser(user) {
@@ -72,42 +51,43 @@
       };
 
       user.isAdmin = function() {
-        return true;
-        // return this.hasRole(options.adminRoles);
+        return this.hasRole(options.adminRoles);
       };
 
-      console.log('user after decoration=', user);
-      console.log('isAdmin=', user.isAdmin());
+      //console.log('user after decoration=', user);
+      //console.log('isAdmin=', user.isAdmin());
       return user;
     }
 
     function hasUmsSessionCookie() {
-      var regex = new RegExp('casSession=.+');
+      var regex = new RegExp('vanSession=.+');
       return regex.test(document.cookie);
     }
 
     function getCurrentUser() {
-      console.log('angular-eha.ums-auth getCurrentUser called');
+      //console.log('angular-eha.ums-auth getCurrentUser called');
       if (currentUser) {
+        console.log('angular-eha.ums-auth: getCurrentUser: currentUser found:', currentUser.name);
         return $q.when(decorateUser(currentUser));
+        // If $q.when() is passed a non-promise object, it is effectively the same as creating an immediately resolved promise object
       } else if (hasUmsSessionCookie()) {
+        console.log('angular-eha.ums-auth: getCurrentUser: currentUser not found, but we have a session cookie.');
         var sessionUrl = options.url + '/' + options.sessionEndpoint;
         return $q.when(Restangular
           .oneUrl('session', sessionUrl)
           .get())
           .then(function(session) {
-            console.log('getCurrentUser: session=', session);
+            //console.log('getCurrentUser: session=', session);
             var user = session.userCtx;
             if (user) {
               currentUser = user;
-              setLocalUser(user);
               return decorateUser(user);
             } else {
               $q.reject('Session not found');
             }
           });
       } else {
-        console.error('angular-eha.ums-auth: We have neither a session cookie nor a user in localForage.');
+        console.error('angular-eha.ums-auth: We do not have a session cookie');
       }
     }
 
@@ -168,11 +148,9 @@
   }
 
   ngModule.provider('ehaUmsAuthService',
-  function ehaUmsAuthService($localForageProvider) {
+  function ehaUmsAuthService() {
 
     var options = {
-      localStorageNamespace: 'eha',
-      localStorageStoreName: 'auth',
       adminRoles: ['_admin'],
       sessionEndpoint: '_session'
     };
@@ -213,11 +191,6 @@
     this.config = function(config) {
       options = angular.extend(options, config);
 
-      $localForageProvider.config({
-        name: options.localStorageNamespace,
-        storeName: options.localStorageStoreName
-      });
-
       if (config.userRoles) {
         config.userRoles.forEach(function(role) {
           var functionName = 'require' + camelCase(role) + 'User';
@@ -250,7 +223,7 @@
       };
     };
 
-    this.$get = function(Restangular, $log, $q, $localForage, $rootScope) {
+    this.$get = function(Restangular, $log, $q, $rootScope) {
 
       var restangular = Restangular.withConfig(
         function(RestangularConfigurer) {
@@ -262,7 +235,7 @@
         }
       );
 
-      return new UmsAuthService(options, restangular, $log, $q, $localForage, $rootScope);
+      return new UmsAuthService(options, restangular, $log, $q, $rootScope);
     };
 
   });

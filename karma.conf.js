@@ -20,8 +20,6 @@ module.exports = function(config) {
       'bower_components/angular-cookies/angular-cookies.js',
       'bower_components/lodash/lodash.js',
       'bower_components/restangular/dist/restangular.js',
-      'bower_components/localforage/dist/localforage.js',
-      'bower_components/angular-localForage/dist/angular-localForage.js',
       'src/**/*.js',
       'tests/**/*.spec.js',
       '.tmp/templates.js'

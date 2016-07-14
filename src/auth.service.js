@@ -11,16 +11,19 @@
 
   function UmsAuthService(options, Restangular, $log, $q, $rootScope) {
 
+    var SESSION_URL = options.url + '/' + options.sessionEndpoint;
     var currentUser;
 
     // Create a new 'isolate scope' so that we can leverage and wrap angular's
     // sub/pub functionality rather than rolling something ourselves
     var eventBus = $rootScope.$new(true);
 
+    /*
+     * Fetch the session endpoint and check if the response contains .userCtx (former couchdb user document data).
+     */
     function getSession() {
-      var sessionUrl = options.url + '/' + options.sessionEndpoint;
       return $q.when(Restangular
-        .oneUrl('session', sessionUrl)
+        .oneUrl('session', SESSION_URL)
         .get())
         .then(function(session) {
           if (session.userCtx) {
@@ -31,12 +34,18 @@
         });
     }
 
+    /*
+     * Delete the session cookie and broadcast that the authentication state has changed.
+     */
     function signOut() {
       console.log('angular-eha.ums-auth: deleting vanSession cookie');
       document.cookie = 'vanSession=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       eventBus.$broadcast('authenticationStateChange');
     }
 
+    /*
+     * Attach the methods .hasRole and .isAdmin to the user object.
+     */
     function decorateUser(user) {
       user.hasRole = function(role) {
         var self = this;
@@ -133,7 +142,6 @@
 
     return {
       signOut: signOut,
-      getSession: getSession,
       getCurrentUser: getCurrentUser,
       on: eventBus.$on.bind(eventBus),
       trigger: eventBus.$broadcast.bind(eventBus),

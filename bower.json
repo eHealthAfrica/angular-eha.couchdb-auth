@@ -27,7 +27,6 @@
     "lodash": "~3.5.0"
   },
   "resolutions": {
-    "lodash": "~3.5.0",
-    "localforage": "~1.2.2"
+    "lodash": "~3.5.0"
   }
 }

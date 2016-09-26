@@ -91,6 +91,14 @@ Calling `resetPassword()` with a valid `token` and a new `password` will initiat
 
 _Promise/A+_ Makes a GET request to the `_session/` endpoint of the CouchDB url provided during configuration. _Returns a promise._
 
+
+#### `getUserFromSession()`
+
+Intended to be used with a couchdb proxy auth setup.
+
+_Promise/A+_ Makes a GET request to the `_session/` endpoint of the CouchDB url provided during configuration. _Returns a promise._
+If session is returned, the user will be persisted.
+
 #### `getCurrentUser()`
 
 _Promise/A+_ Checks the local environment for a user, failing that checks local storage and finally attempts to GET the `_session/` endpoint of the CouchDB url.

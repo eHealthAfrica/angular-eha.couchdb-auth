@@ -39,6 +39,29 @@
                       });
     }
 
+    function getUserFromSession(user) {
+      return getSession()
+      .then(setCurrentUser)
+      .then(function(user) {
+        if (!user || !user.ok) {
+          $log.debug('couchdb:login:failure:unknown');
+          return $q.reject(new Error());
+        }
+        eventBus.$broadcast('authenticationStateChange');
+        $log.debug('couchdb:login:success', user);
+        return decorateUser(user);
+      })
+      .catch(function(err) {
+        if (err.status === 401) {
+          $log.debug('couchdb:login:failure:invalid-credentials', err);
+          return $q.reject(new Error('Invalid Credentials'));
+        } else {
+          $log.debug('couchdb:login:failure:unknown', err);
+          return $q.reject(new Error(err));
+        }
+      });
+    }
+
     function signIn(user) {
       return $q.when(Restangular
         .all(options.sessionEndpoint)
@@ -197,6 +220,7 @@
         remove: removeAccount
       },
       getSession: getSession,
+      getUserFromSession: getUserFromSession,
       getCurrentUser: getCurrentUser,
       on: eventBus.$on.bind(eventBus),
       trigger: eventBus.$broadcast.bind(eventBus),

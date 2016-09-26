@@ -25,6 +25,7 @@
         if (hostMatch(request.url)) {
           // Grab the service this way to avoid a circular dependency
           var auth = $injector.get('ehaCouchDbAuthService');
+          /*
           // Try to get current user
           return auth.getCurrentUser()
             .then(function(user) {
@@ -41,6 +42,7 @@
               // through un modified
               return request;
             });
+           */
         }
         return $q.when(request);
       },
@@ -48,7 +50,7 @@
         // Check for 401 and hostMatch
         if (rejection.status === 401 && hostMatch(rejection.config.url)) {
           var auth = $injector.get('ehaCouchDbAuthService');
-          auth.trigger('unauthenticated');
+          //auth.trigger('unauthenticated');
         }
         return $q.reject(rejection);
       }

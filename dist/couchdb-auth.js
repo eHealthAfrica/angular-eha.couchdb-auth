@@ -12,7 +12,8 @@
                               $log,
                               $q,
                               $localForage,
-                              $rootScope) {
+                              $rootScope,
+                              $window) {
 
     var currentUser;
 

@@ -12,7 +12,8 @@
                               $log,
                               $q,
                               $localForage,
-                              $rootScope) {
+                              $rootScope,
+                              $window) {
 
     var currentUser;
 
@@ -83,8 +84,8 @@
 
     function goToExternal(route) {
       return function() {
-        $window.location = route
-      }
+        $window.location = route;
+      };
     }
 
     return {

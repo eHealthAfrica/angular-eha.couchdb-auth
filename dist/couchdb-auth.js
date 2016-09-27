@@ -1,11 +1,6 @@
-;(function() {
+(function() {
   'use strict';
-  /**
-   * @ngdoc service
-   * @function
-   * @name ehaCouchDbService
-   * @module eha.couchdb-auth
-   */
+
   var ngModule = angular
   .module('eha.couchdb-auth.auth.service', [
     'restangular',
@@ -37,88 +32,6 @@
                           $q.reject('Session not found');
                         }
                       });
-    }
-
-    function signIn(user) {
-      return $q.when(Restangular
-        .all(options.sessionEndpoint)
-        .customPOST({
-          name: user.username,
-          password: user.password
-        }))
-        .then(function(user) {
-          return user.plain();
-        })
-        .then(setCurrentUser)
-        .then(function(user) {
-          return getSession()
-                  .then(function(userMeta) {
-                    return angular.extend(userMeta.plain(), user);
-                  });
-        })
-        .then(setCurrentUser)
-        .then(function(user) {
-          if (!user || !user.ok) {
-            $log.debug('couchdb:login:failure:unknown');
-            return $q.reject(new Error());
-          }
-          eventBus.$broadcast('authenticationStateChange');
-          $log.debug('couchdb:login:success', user);
-          return decorateUser(user);
-        })
-        .catch(function(err) {
-          if (err.status === 401) {
-            $log.debug('couchdb:login:failure:invalid-credentials', err);
-            return $q.reject(new Error('Invalid Credentials'));
-          } else {
-            $log.debug('couchdb:login:failure:unknown', err);
-            return $q.reject(new Error(err));
-          }
-        });
-    }
-
-    function clearLocalUser() {
-      currentUser = null;
-      return $localForage.removeItem('user');
-    }
-
-    function setLocalUser(user) {
-      return $localForage.setItem('user', user);
-    }
-
-    function getLocalUser() {
-      return $localForage.getItem('user');
-    }
-
-    function signOut() {
-      return clearLocalUser().then(function() {
-        eventBus.$broadcast('authenticationStateChange');
-        return true;
-      });
-    }
-
-    function resetPassword(config) {
-      if (config.token && config.password) {
-        return $q.when(Restangular
-                       .all('reset-password')
-                       .customPOST({
-                         token: config.token,
-                         password: config.password
-                       }));
-      }
-
-      if (config.email && config.callbackUrl) {
-        return $q.when(Restangular
-                       .all('reset-password')
-                       .customPOST({
-                         email: config.email,
-                         callbackUrl: config.callbackUrl
-                       }));
-      } else {
-        return $q.reject('You must provide both email and callbackUrl ' +
-                         'properties in the payload');
-      }
-
     }
 
     function addAccount() {
@@ -153,44 +66,28 @@
     }
 
     function getCurrentUser() {
-      if (currentUser) {
-        return $q.when(decorateUser(currentUser));
-      }
 
-      return getLocalUser()
-        .then(function(user) {
-          if (user) {
-            currentUser = user;
-            return decorateUser(user);
-          } else {
-            return $q.reject('User not found');
-          }
-        })
-        .then(function(user) {
-          return getSession()
-                  .then(function() {
-                    return user;
-                  });
-        })
-        .catch(function(err) {
-          $log.debug(err);
-          return $q.reject(err);
-        });
+      if (currentUser) {
+        return $q.when(currentUser);
+      } else {
+        return getSession()
+          .then(function(user) {
+            currentUser = decorateUser(user);
+          })
+          .catch(function(err) {
+            $log.debug(err);
+            return $q.reject(err);
+          });
+      }
     }
 
-    function setCurrentUser(user) {
-      if (user) {
-        currentUser =  user;
-        return setLocalUser(user);
-      }
-
-      $q.reject('No user found');
+    function goToExternal(route) {
+      return function() {
+        $window.location = route;
+      };
     }
 
     return {
-      signIn: signIn,
-      signOut: signOut,
-      resetPassword: resetPassword,
       accounts: {
         add: addAccount,
         update: updateAccount,
@@ -206,7 +103,9 @@
         }
 
         return getSession();
-      }
+      },
+      logIn: goToExternal('/login'),
+      logOut: goToExternal('/logout')
     };
   }
 

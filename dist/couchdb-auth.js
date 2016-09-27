@@ -4,9 +4,16 @@
   var ngModule = angular
   .module('eha.couchdb-auth.auth.service', [
     'restangular',
-    'LocalForageModule'
+    'LocalForageModule',
+    'ng' // for `$window`
   ]);
 
+  var weAreRunningUnitTests = false;
+
+  // this way of passing dependencies twice is tedious and
+  // error prone, and i am not sure about the advantages of doing
+  // so. I would say that it would be better to refactor and eliminate
+  // this duplication -- 2016-09-27 francesco
   function CouchDbAuthService(options,
                               Restangular,
                               $log,
@@ -84,7 +91,11 @@
 
     function goToExternal(route) {
       return function() {
-        $window.location = route;
+        if (weAreRunningUnitTests) {
+          return;
+        } else {
+          $window.location.assign(route);
+        }
       };
     }
 
@@ -203,7 +214,18 @@
       };
     };
 
-    this.$get = ['Restangular', '$log', '$q', '$localForage', '$rootScope', function(Restangular, $log, $q, $localForage, $rootScope) {
+    this.weAreRunningUnitTests = function() {
+      weAreRunningUnitTests = true;
+    };
+
+    this.$get = ['Restangular', '$log', '$q', '$localForage', '$rootScope', '$window', function(
+      Restangular,
+      $log,
+      $q,
+      $localForage,
+      $rootScope,
+      $window
+    ) {
 
       var restangular = Restangular.withConfig(
         function(RestangularConfigurer) {
@@ -220,7 +242,8 @@
                                     $log,
                                     $q,
                                     $localForage,
-                                    $rootScope);
+                                    $rootScope,
+                                    $window);
     }];
 
   }]);

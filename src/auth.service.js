@@ -1,23 +1,33 @@
-;(function() {
+(function() {
   'use strict';
-  /**
-   * @ngdoc service
-   * @function
-   * @name ehaCouchDbService
-   * @module eha.couchdb-auth
-   */
+
+  // i had to debug this code while a minified version was served. I
+  // could not use the debugger so i had to use extensive
+  // logging. It's probably a good idea to eventually remove most of
+  // the logging commands on the happy path, while log messages could
+  // be kept in the error branches
+  var log = console.log;
+
   var ngModule = angular
   .module('eha.couchdb-auth.auth.service', [
     'restangular',
-    'LocalForageModule'
+    'LocalForageModule',
+    'ng' // for `$window`
   ]);
 
+  var weAreRunningUnitTests = false;
+
+  // this way of passing dependencies twice is tedious and
+  // error prone, and i am not sure about the advantages of doing
+  // so. I would say that it would be better to refactor and eliminate
+  // this duplication -- 2016-09-27 francesco
   function CouchDbAuthService(options,
                               Restangular,
                               $log,
                               $q,
                               $localForage,
-                              $rootScope) {
+                              $rootScope,
+                              $window) {
 
     var currentUser;
 
@@ -26,99 +36,23 @@
     var eventBus = $rootScope.$new(true);
 
     function getSession() {
-      var sessionUrl = options.url + '/' + options.sessionEndpoint;
-      return $q.when(Restangular
-                      .oneUrl('session', sessionUrl)
-                      .get())
-                      .then(function(session) {
-                        if (session.userCtx) {
-                          return session;
-                        } else {
-                          $q.reject('Session not found');
-                        }
-                      });
-    }
-
-    function signIn(user) {
-      return $q.when(Restangular
-        .all(options.sessionEndpoint)
-        .customPOST({
-          name: user.username,
-          password: user.password
-        }))
-        .then(function(user) {
-          return user.plain();
-        })
-        .then(setCurrentUser)
-        .then(function(user) {
-          return getSession()
-                  .then(function(userMeta) {
-                    return angular.extend(userMeta.plain(), user);
-                  });
-        })
-        .then(setCurrentUser)
-        .then(function(user) {
-          if (!user || !user.ok) {
-            $log.debug('couchdb:login:failure:unknown');
-            return $q.reject(new Error());
-          }
-          eventBus.$broadcast('authenticationStateChange');
-          $log.debug('couchdb:login:success', user);
-          return decorateUser(user);
-        })
-        .catch(function(err) {
-          if (err.status === 401) {
-            $log.debug('couchdb:login:failure:invalid-credentials', err);
-            return $q.reject(new Error('Invalid Credentials'));
+      log('getSession');
+      var sessionUrl = options.sessionEndpoint;
+      return $q
+        .when(Restangular.oneUrl('session', sessionUrl).get())
+        .then(function(response) {
+          log('getSession then');
+          var context = response.userCtx;
+          if (context) {
+            return decorateUser(context);
           } else {
-            $log.debug('couchdb:login:failure:unknown', err);
-            return $q.reject(new Error(err));
+            $q.reject('User context not found in the session response');
           }
+        })
+        .catch(function(e) {
+          $log.log('error in getSession:', e);
+          return $q.reject(e);
         });
-    }
-
-    function clearLocalUser() {
-      currentUser = null;
-      return $localForage.removeItem('user');
-    }
-
-    function setLocalUser(user) {
-      return $localForage.setItem('user', user);
-    }
-
-    function getLocalUser() {
-      return $localForage.getItem('user');
-    }
-
-    function signOut() {
-      return clearLocalUser().then(function() {
-        eventBus.$broadcast('authenticationStateChange');
-        return true;
-      });
-    }
-
-    function resetPassword(config) {
-      if (config.token && config.password) {
-        return $q.when(Restangular
-                       .all('reset-password')
-                       .customPOST({
-                         token: config.token,
-                         password: config.password
-                       }));
-      }
-
-      if (config.email && config.callbackUrl) {
-        return $q.when(Restangular
-                       .all('reset-password')
-                       .customPOST({
-                         email: config.email,
-                         callbackUrl: config.callbackUrl
-                       }));
-      } else {
-        return $q.reject('You must provide both email and callbackUrl ' +
-                         'properties in the payload');
-      }
-
     }
 
     function addAccount() {
@@ -134,63 +68,54 @@
     }
 
     function decorateUser(user) {
+      log('decorating user', user);
       user.hasRole = function(role) {
-        var self = this;
         if (angular.isArray(role)) {
           var matches = role.filter(function(r) {
-            return self.roles.indexOf(r) > -1;
+            return user.roles.indexOf(r) > -1;
           });
           return !!matches.length;
         } else if (angular.isString(role)) {
-          return this.roles.indexOf(role) > -1;
+          return user.roles.indexOf(role) > -1;
         }
       };
-
       user.isAdmin = function() {
-        return this.hasRole(options.adminRoles);
+        return user.hasRole(options.adminRoles);
       };
       return user;
     }
 
     function getCurrentUser() {
+      log('getCurrentUser');
       if (currentUser) {
-        return $q.when(decorateUser(currentUser));
-      }
-
-      return getLocalUser()
-        .then(function(user) {
-          if (user) {
+        log('available');
+        return $q.when(currentUser);
+      } else {
+        log('getting session');
+        return getSession()
+          .then(function(user) {
             currentUser = user;
-            return decorateUser(user);
-          } else {
-            return $q.reject('User not found');
-          }
-        })
-        .then(function(user) {
-          return getSession()
-                  .then(function() {
-                    return user;
-                  });
-        })
-        .catch(function(err) {
-          $log.debug(err);
-          return $q.reject(err);
-        });
+            return currentUser;
+          })
+          .catch(function(e) {
+            log('error in `getCurrentUser` in the Couch auth service:', e);
+            ehaCouchDbAuthService.trigger('unauthenticated');
+            return $q.reject(e);
+          });
+      }
     }
 
-    function setCurrentUser(user) {
-      if (user) {
-        currentUser =  user;
-        return setLocalUser(user);
-      }
-
-      $q.reject('No user found');
+    function goToExternal(route) {
+      return function() {
+        if (weAreRunningUnitTests) {
+          return;
+        } else {
+          $window.location.assign(route);
+        }
+      };
     }
 
     return {
-      signIn: signIn,
-      signOut: signOut,
-      resetPassword: resetPassword,
       accounts: {
         add: addAccount,
         update: updateAccount,
@@ -206,7 +131,9 @@
         }
 
         return getSession();
-      }
+      },
+      logIn: goToExternal('/login'),
+      logOut: goToExternal('/logout')
     };
   }
 
@@ -287,11 +214,14 @@
     };
 
     this.requireAuthenticatedUser = function(ehaCouchDbAuthService, $q) {
+      console.log('requireAuthenticatedUser');
       return ehaCouchDbAuthService.getCurrentUser()
                 .then(function(user) {
+                  console.log('requireAuthenticatedUser returns successfully');
                   return user;
                 })
                 .catch(function(err) {
+                  console.log('requireAuthenticatedUser unauthenticated');
                   ehaCouchDbAuthService.trigger('unauthenticated');
                   return $q.reject('unauthenticated');
                 });
@@ -303,7 +233,18 @@
       };
     };
 
-    this.$get = function(Restangular, $log, $q, $localForage, $rootScope) {
+    this.weAreRunningUnitTests = function() {
+      weAreRunningUnitTests = true;
+    };
+
+    this.$get = function(
+      Restangular,
+      $log,
+      $q,
+      $localForage,
+      $rootScope,
+      $window
+    ) {
 
       var restangular = Restangular.withConfig(
         function(RestangularConfigurer) {
@@ -320,7 +261,8 @@
                                     $log,
                                     $q,
                                     $localForage,
-                                    $rootScope);
+                                    $rootScope,
+                                    $window);
     };
 
   });

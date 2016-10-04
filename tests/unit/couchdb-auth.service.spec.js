@@ -57,145 +57,14 @@ describe('eha.couchdb-auth.service', function() {
   }));
 
   describe('Public API', function() {
-    describe('signIn()', function() {
-      var couchResSuccess;
-      var couchResFail;
+    describe('logIn()', function() {
       it('should be defined', function() {
-        expect(service.signIn).to.be.defined;
+        expect(service.logIn).to.be.defined;
       });
-
-      beforeEach(function() {
-        couchResSuccess = {
-          'ok':true,
-          'userCtx': {
-            'name':'test',
-            'roles':[]
-          },
-          'info': {
-            'authentication_db':'_users',
-            'authentication_handlers':[
-              'oauth',
-              'cookie',
-              'default'
-            ],
-            'authenticated':'cookie'
-          },
-          'authToken': 'AUTH_TOKEN'
-        };
-
-        couchResFail = {
-          'data':{
-
-          },
-          'status':401,
-          'config':{
-            'method':'POST',
-            'transformRequest':[
-              null
-            ],
-            'transformResponse':[
-              null
-            ],
-            'headers':{
-              'Accept':'application/json, text/plain, */*',
-              'Content-Type':'application/json;charset=utf-8'
-            },
-            'url':config.auth.api.url + '/_session',
-            'data':{
-              'name':'test',
-              'password':'wrong'
-            }
-          },
-          'statusText':''
-        };
-      });
-
-      describe('valid credentials', function() {
-
-        beforeEach(function() {
-          $httpBackend
-            .whenPOST(config.auth.api.url + '/_session', {
-              name: 'test',
-              password: 'test'
-            })
-            .respond(couchResSuccess);
-
-          $httpBackend
-            .whenGET(config.auth.api.url + '/_session')
-            .respond(couchResSuccess);
-        });
-
-        afterEach(function() {
-          $httpBackend.verifyNoOutstandingExpectation();
-          $httpBackend.verifyNoOutstandingRequest();
-        });
-
-        it('should log in with valid credentials', function() {
-
-          var login = service.signIn({
-            username: 'test',
-            password: 'test'
-          });
-
-          login.should.become({
-            name: couchResSuccess.userCtx.name,
-            roles: couchResSuccess.userCtx.roles,
-          }).and.notify(function() {
-            stopDigests(interval);
-            done();
-          });
-
-          $httpBackend.flush();
-        });
-      });
-
-      describe('invalid credentials', function() {
-        beforeEach(function() {
-          $httpBackend
-            .whenPOST(config.auth.api.url + '/_session', {
-              name: 'test',
-              password: 'wrong'
-            })
-            .respond(401, couchResFail);
-        });
-        afterEach(function() {
-          $httpBackend.verifyNoOutstandingExpectation();
-          $httpBackend.verifyNoOutstandingRequest();
-        });
-
-        it('should not log in with invalid credentials', function() {
-          service.signIn({
-            username: 'test',
-            password: 'wrong'
-          }).should.be.rejectedWith('Invalid Credentials');
-          $httpBackend.flush();
-        });
-      });
-
     });
-    describe('signOut()', function() {
-
-      var couchResSuccess;
-      var couchResFail;
-
-      beforeEach(function() {
-        couchResSuccess = {
-          ok: true
-        };
-        couchResFail = {};
-
-      });
-
+    describe('logOut()', function() {
       it('should be defined', function() {
-        expect(service.signOut).to.be.defined;
-      });
-
-      it('should log out', function(done) {
-        triggerDigests();
-        expect(service.signOut()).to.be.fulfilled.and.notify(function() {
-          stopDigests();
-          done();
-        });
+        expect(service.logOut).to.be.defined;
       });
     });
 

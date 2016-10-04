@@ -101,9 +101,6 @@ module.exports = function(grunt) {
         autoWatch: true
       }
     },
-    jshint: {
-      all: ['src/**/*.js', 'tests/**/*.spec.js']
-    },
     jscs: {
       src: ['src/**/*.js', 'tests/**/*.spec.js'],
       options: {
@@ -114,7 +111,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('template', ['html2js']);
-  grunt.registerTask('test', ['template', 'jshint', 'jscs', 'karma:unit']);
+  grunt.registerTask('test', ['template', 'jscs', 'karma:unit']);
   grunt.registerTask('test:watch', ['karma:watch']);
 
   grunt.registerTask('build', function() {
@@ -130,5 +127,5 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('default', ['jshint', 'jscs', 'build']);
+  grunt.registerTask('default', ['jscs', 'build']);
 };
